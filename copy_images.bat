@@ -1,0 +1,2 @@
+copy /y "C:\Users\Balaji\.gemini\antigravity\brain\05fd239b-141c-4788-ac09-258f6ca24ea3\media__1775628680035.jpg" "c:\Users\Balaji\Downloads\MockMate-main (1)\MockMate-main\frontend\public\team_balaji.png"
+copy /y "C:\Users\Balaji\.gemini\antigravity\brain\05fd239b-141c-4788-ac09-258f6ca24ea3\media__1775627292706.jpg" "c:\Users\Balaji\Downloads\MockMate-main (1)\MockMate-main\frontend\public\team_rupesh.png"

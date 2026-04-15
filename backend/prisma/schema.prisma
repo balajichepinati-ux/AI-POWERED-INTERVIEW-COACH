@@ -1,0 +1,200 @@
+// generator and datasource
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(uuid())
+  supabaseId String    @unique @map("supabase_id")
+  name       String?
+  email      String    @unique
+  avatarUrl  String?   @map("avatar_url")
+  isEmailVerified Boolean @default(false) @map("is_email_verified")
+  isLocked   Boolean   @default(false) @map("is_locked")
+  lockedUntil DateTime? @map("locked_until")
+  failedLoginAttempts Int @default(0) @map("failed_login_attempts")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  resumes  Resume[]
+  sessions Session[]
+  loginAttempts LoginAttempt[]
+  mfaConfig MFAConfig?
+  emailVerifications EmailVerification[]
+  passwordResets PasswordReset[]
+  userSessions UserSession[]
+  auditLogs AuditLog[]
+
+  @@map("users")
+}
+
+model Resume {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  fileName      String   @map("file_name")
+  fileUrl       String?  @map("file_url")
+  extractedText String?  @map("extracted_text") @db.Text
+  parsedSkills  Json?    @map("parsed_skills")
+  parsedProjects Json?   @map("parsed_projects")
+  parsedExperience Json? @map("parsed_experience")
+  parsedEducation Json?  @map("parsed_education")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("resumes")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  question     String   @db.Text
+  category     String
+  answer       String   @db.Text
+  overallScore Int      @map("overall_score")
+  verdict      String?  @db.Text
+  shortSummary String?  @map("short_summary") @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score    Score?
+  feedback Feedback?
+
+  @@map("sessions")
+}
+
+model Score {
+  id         String  @id @default(uuid())
+  sessionId  String  @unique @map("session_id")
+  clarity    Int
+  structure  Int
+  confidence Int
+  relevance  Int
+  english    Int
+  fluency    Int
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("scores")
+}
+
+model Feedback {
+  id           String   @id @default(uuid())
+  sessionId    String   @unique @map("session_id")
+  strengths    Json
+  improvements Json
+  fillerWords  Json     @map("filler_words")
+  rewrite      String?  @db.Text
+  followUp     String?  @map("follow_up") @db.Text
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("feedback")
+}
+
+// Security Models
+model LoginAttempt {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  email     String
+  success   Boolean
+  ipAddress String   @map("ip_address")
+  userAgent String   @map("user_agent")
+  reason    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("login_attempts")
+}
+
+model UserSession {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  tokenHash     String   @map("token_hash")
+  refreshTokenHash String? @map("refresh_token_hash")
+  expiresAt     DateTime @map("expires_at")
+  ipAddress     String   @map("ip_address")
+  userAgent     String   @map("user_agent")
+  isRevoked     Boolean  @default(false) @map("is_revoked")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("user_sessions")
+}
+
+model MFAConfig {
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
+  isEnabled Boolean  @default(false) @map("is_enabled")
+  method    String   // "totp", "sms", "email"
+  secret    String?  // For TOTP
+  phone     String?  // For SMS
+  backupCodes Json?  // Backup codes
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mfa_configs")
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  email     String
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  isUsed    Boolean  @default(false) @map("is_used")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("email_verifications")
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  isUsed    Boolean  @default(false) @map("is_used")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("password_resets")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  action    String   // "login", "logout", "failed_login", "password_reset", "mfa_enabled", etc.
+  resource  String   // "auth", "user", "session", etc.
+  details   Json?
+  ipAddress String   @map("ip_address")
+  userAgent String   @map("user_agent")
+  status    String   // "success", "failure", "suspicious"
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

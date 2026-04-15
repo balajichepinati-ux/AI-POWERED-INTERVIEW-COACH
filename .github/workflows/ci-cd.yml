@@ -1,0 +1,87 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install backend dependencies
+      run: cd backend && npm ci
+    
+    - name: Install frontend dependencies
+      run: cd frontend && npm ci
+    
+    - name: Lint backend
+      run: cd backend && npm run lint --if-present
+    
+    - name: Lint frontend
+      run: cd frontend && npm run lint --if-present
+    
+    - name: Test backend
+      run: cd backend && npm test --if-present
+    
+    - name: Test frontend
+      run: cd frontend && npm test --if-present
+    
+    - name: Build frontend
+      run: cd frontend && npm run build
+
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run security audit
+      run: |
+        cd backend && npm audit --audit-level=moderate || true
+        cd ../frontend && npm audit --audit-level=moderate || true
+    
+    - name: SAST scan (Semgrep)
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/owasp-top-ten
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build Docker image
+      run: docker build -t mockmate:latest .
+    
+    - name: Push to registry
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        docker tag mockmate:latest ${{ secrets.DOCKER_USERNAME }}/mockmate:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/mockmate:latest
+      if: secrets.DOCKER_USERNAME != ''
+    
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production..."
+        # Add your deployment commands here
+      if: secrets.DEPLOY_KEY != ''
