@@ -362,13 +362,7 @@ export default function LandingPage() {
             <p className="flex items-center justify-center gap-2">
               © 2026 MockMate <span className="w-1 h-1 rounded-full bg-slate-600" /> High-Performance AI Assistant <span className="w-1 h-1 rounded-full bg-slate-600" /> 3D Web Engine
             </p>
-            <p className="text-slate-500 text-xs">
-              Proudly Built by Students of<br/>
-              <span className="text-brand-400 font-semibold">SRM Institute of Technology, Kattankulathur</span>
-            </p>
-            <p className="text-slate-500 text-xs">
-              Project Guide: <span className="text-accent-violet font-semibold">Dr. Maheshwari A</span>
-            </p>
+
           </div>
         </div>
       </footer>

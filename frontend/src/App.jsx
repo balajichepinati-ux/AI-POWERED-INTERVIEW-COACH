@@ -12,7 +12,6 @@ import HistoryPage from './pages/HistoryPage'
 import DashboardPage from './pages/DashboardPage'
 import SettingsPage from './pages/SettingsPage'
 import ResumePage from './pages/ResumePage'
-import TeamPage from './pages/TeamPage'
 import SystemInitPage from './pages/SystemInitPage'
 import FeaturesPage from './pages/FeaturesPage'
 
@@ -40,7 +39,6 @@ function AppRoutes() {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/system-init" element={<SystemInitPage />} />
-        <Route path="/team" element={<TeamPage />} />
 
         {/* Protected */}
         <Route path="/resume" element={

@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import {
   Mic, LayoutDashboard, History, Settings,
-  LogOut, ChevronDown, Menu, X, Zap, Users
+  LogOut, ChevronDown, Menu, X, Zap
 } from 'lucide-react'
 
 export default function Navbar() {
@@ -41,21 +41,6 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
-            {/* Team link — always visible */}
-            <NavLink
-              to="/team"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? 'active' : ''}`
-              }
-              style={({ isActive }) => ({
-                borderColor: isActive ? 'rgba(6,182,212,0.5)' : 'transparent',
-                background: isActive ? 'rgba(6,182,212,0.12)' : undefined,
-              })}
-            >
-              <Users size={15} style={{ color: '#06b6d4' }} />
-              <span style={{ color: '#06b6d4', fontWeight: 600 }}>Team</span>
-            </NavLink>
-
             {/* Authenticated-only nav items */}
             {isAuthenticated && navItems.map(({ to, icon: Icon, label }) => (
               <NavLink
@@ -142,14 +127,6 @@ export default function Navbar() {
         {/* Mobile Nav */}
         {menuOpen && (
           <div className="md:hidden border-t border-white/[0.06] py-3 space-y-1 animate-fade-in">
-            <NavLink
-              to="/team"
-              onClick={() => setMenuOpen(false)}
-              className="nav-link"
-            >
-              <Users size={15} />
-              Team
-            </NavLink>
             {isAuthenticated && (
               <>
                 {navItems.map(({ to, icon: Icon, label }) => (
