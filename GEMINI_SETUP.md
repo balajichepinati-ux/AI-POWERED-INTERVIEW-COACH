@@ -20,7 +20,7 @@ VITE_GEMINI_API_KEY=your_api_key_here
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_API_URL=http://localhost:3001
-VITE_GEMINI_API_KEY=AIzaSyD1234567890abcdefghijklmnopqrst
+VITE_GEMINI_API_KEY=api key as yours required
 ```
 
 ## Step 3: Verify Installation
