@@ -223,6 +223,37 @@ export default function ResultsPage() {
           </div>
         </div>
 
+        {/* Proctor Camera Warnings */}
+        {analysis.distractions && (analysis.distractions.phoneDetections > 0 || analysis.distractions.noPersonDetections > 0) && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.65 }}
+            className="glass-card p-6 border-amber-500/30 shadow-[0_4px_20px_rgba(245,158,11,0.1)] relative overflow-hidden bg-amber-500/5"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-5"><ShieldAlert size={80} className="text-amber-500" /></div>
+            <h3 className="text-sm font-mono text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-2 relative z-10">
+              <ShieldAlert size={16} /> Proctoring Flags Detected
+            </h3>
+            <div className="flex flex-col sm:flex-row gap-6 relative z-10">
+              {analysis.distractions.phoneDetections > 0 && (
+                <div className="flex-1 bg-dark-900/60 p-4 rounded-xl border border-amber-500/20">
+                  <div className="font-mono text-xl font-bold text-rose-400 mb-1">{analysis.distractions.phoneDetections}</div>
+                  <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">Phone Retrievals</div>
+                  <p className="text-xs text-slate-300">A mobile device was detected in frame during the session. Keep focus on the terminal.</p>
+                </div>
+              )}
+              {analysis.distractions.noPersonDetections > 0 && (
+                <div className="flex-1 bg-dark-900/60 p-4 rounded-xl border border-amber-500/20">
+                  <div className="font-mono text-xl font-bold text-amber-400 mb-1">{analysis.distractions.noPersonDetections}</div>
+                  <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">Subject Distractions</div>
+                  <p className="text-xs text-slate-300">The subject was not detected in the frame. Maintain eye contact with the visualizer.</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
           {/* Detailed Analysis Panels */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           

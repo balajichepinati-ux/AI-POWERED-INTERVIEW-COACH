@@ -10,6 +10,7 @@ import CategorySelector from '../components/CategorySelector'
 import VoiceRecorder from '../components/VoiceRecorder'
 import ResumeUpload from '../components/ResumeUpload'
 import QuestionsGallery from '../components/QuestionsGallery'
+import CameraMonitor from '../components/CameraMonitor'
 import { useAuth } from '../context/AuthContext'
 import { generateQuestions, generateQuestionsFromAnalysis, analyzeAnswer, saveSession, generateAllCategoriesQuestions } from '../lib/api'
 import { getQuestionsByCategory, DIFFICULTY_COLORS } from '../data/questions'
@@ -77,6 +78,7 @@ export default function PracticePage() {
   const [timerRunning, setTimerRunning] = useState(false)
   const [questionsGenerated, setQuestionsGenerated] = useState(false)
   const [showGallery, setShowGallery] = useState(false)
+  const [distractions, setDistractions] = useState({ phoneDetections: 0, noPersonDetections: 0 })
   const timerRef = useRef(null)
   const answerRef = useRef(null)
 
@@ -233,9 +235,12 @@ export default function PracticePage() {
             shortSummary: data.analysis.shortSummary || data.analysis.feedback_summary || '',
             strengths: data.analysis.strengths || [],
             improvements: data.analysis.improvements || [],
+            distractions: distractions
           })
         } catch {}
-        navigate('/results', { state: { analysis: data.analysis, question: currentQuestion.question, answer: answer.trim(), category } })
+        
+        const finalAnalysis = { ...data.analysis, distractions }
+        navigate('/results', { state: { analysis: finalAnalysis, question: currentQuestion.question, answer: answer.trim(), category } })
       }
     } catch (err) {
       setError(err.message || 'Analysis link failed. Check uplink.')
@@ -296,6 +301,10 @@ export default function PracticePage() {
               <span className="text-xs font-mono text-brand-300 uppercase tracking-widest flex items-center gap-2">
                 <Cpu size={14} /> Knowledge Module
               </span>
+            </div>
+            
+            <div className="mb-2">
+              <CameraMonitor onDistractionUpdate={setDistractions} />
             </div>
             
             <div>
