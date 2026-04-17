@@ -14,14 +14,6 @@ MockMate now includes an intelligent **multi-key API rotation system** that auto
 ✅ **Manual Control** - Reset keys or manual rotation if needed
 ✅ **Status Component** - Visual indicator of API health
 
-## Your API Keys
-
-### Configured Keys (in order of priority):
-1. `AIzaSyCHRr8fVIVkCRWhH8mdvrCUMgoqlMSfWnE`
-2. `AIzaSyBeVVSC9LrHGu4xA2AqBv9ikW-Ya-2_cdo`
-3. `AIzaSyDre2zAUomOR2Lz4OBkXyH-IhuwZ7q0GBc`
-4. `AIzaSyD3zd2fy_bejXRiOCTJdMiCDotzukpjdIc`
-5. `AIzaSyB1XGK1nC_FHF7XNIFivlmhQzulVfWqT5g`
 
 ### Override with Environment Variable:
 You can also provide a key via `.env.local`:
