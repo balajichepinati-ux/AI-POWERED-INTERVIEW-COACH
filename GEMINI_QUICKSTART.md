@@ -99,14 +99,6 @@ function YourComponent() {
 }
 ```
 
-## 🔄 How Automatic Rotation Works
-
-**Your 5 API Keys (in order):**
-1. `AIzaSyCHRr8fVIVkCRWhH8mdvrCUMgoqlMSfWnE`
-2. `AIzaSyBeVVSC9LrHGu4xA2AqBv9ikW-Ya-2_cdo`
-3. `AIzaSyDre2zAUomOR2Lz4OBkXyH-IhuwZ7q0GBc`
-4. `AIzaSyD3zd2fy_bejXRiOCTJdMiCDotzukpjdIc`
-5. `AIzaSyB1XGK1nC_FHF7XNIFivlmhQzulVfWqT5g`
 
 **Flow:**
 ```
